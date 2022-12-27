@@ -1,10 +1,11 @@
-package com.programmingtechie.inventoryservice.dto;
+package com.programmingtechie.orderservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//esta classe nao podemos acessar partindo do inventory service por isso copiei toda para aqui
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
