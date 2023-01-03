@@ -1,10 +1,9 @@
 package com.programming.techie;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Main {
+public class DiscoveryServerApplication {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+       SpringBootApplication.run(DiscoveryServerApplication.class, args);
     }
 }
