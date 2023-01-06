@@ -44,7 +44,7 @@ public class OrderService {
                 .uri("http://localhost:8102/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
-                .bodyToMono(InventoryResponse[].class)//para ser possivel a leitura dos daados da url e presico chamar o bodyToMono
+                .bodyToMono(InventoryResponse[].class)//para ser possivel a leitura dos dados da url e preciso chamar o bodyToMono
                 .block();// para identificar que e uma requisicao sincrona
 
         boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
