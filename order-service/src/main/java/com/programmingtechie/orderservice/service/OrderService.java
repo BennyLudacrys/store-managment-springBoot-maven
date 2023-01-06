@@ -41,7 +41,7 @@ public class OrderService {
 
 //chama inventory servie e guarda o pedido caso esteja em stock
         InventoryResponse[] inventoryResponsesArray = webClient.get()
-                .uri("http://localhost:8102/api/inventory",
+                .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)//para ser possivel a leitura dos dados da url e preciso chamar o bodyToMono
