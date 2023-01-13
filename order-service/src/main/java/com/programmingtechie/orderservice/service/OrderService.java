@@ -7,6 +7,9 @@ import com.programmingtechie.orderservice.model.Order;
 import com.programmingtechie.orderservice.model.OrderLineItems;
 import com.programmingtechie.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,13 +21,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
+    private final Tracer tracer;
 
 
-    public void placeOrder(OrderRequest orderRequest) {
+    public String placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -38,23 +43,32 @@ public class OrderService {
         List<String> skuCodes = order.getOrderLineItemsList().stream()
                 .map(OrderLineItems::getSkuCode)
                 .toList();
+        log.info("calling inventory service");
 
-//chama inventory servie e guarda o pedido caso esteja em stock
-        InventoryResponse[] inventoryResponsesArray = webClientBuilder.build().get()
-                .uri("http://inventory-service/api/inventory",
-                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
-                .retrieve()
-                .bodyToMono(InventoryResponse[].class)//para ser possivel a leitura dos dados da url e preciso chamar o bodyToMono
-                .block();// para identificar que e uma requisicao sincrona
+        Span inventoryServiceLookup = tracer.nextSpan().name("InventoryServiceLookup");
 
-        boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
-                .allMatch(InventoryResponse::isInStock); //faz a verificacao se o produto existe ou nao
-        if (allProductsInStock){
-           orderRepository.save(order);
+       try( Tracer.SpanInScope spanInScope= tracer.withSpan(inventoryServiceLookup.start())){
+           //chama inventory servie e guarda o pedido caso esteja em stock
+           InventoryResponse[] inventoryResponsesArray = webClientBuilder.build().get()
+                   .uri("http://inventory-service/api/inventory",
+                           uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+                   .retrieve()
+                   .bodyToMono(InventoryResponse[].class)//para ser possivel a leitura dos dados da url e preciso chamar o bodyToMono
+                   .block();// para identificar que e uma requisicao sincrona
 
-       }else{
-           throw new IllegalArgumentException("this product is not in stock, please try again later");
+           boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
+                   .allMatch(InventoryResponse::isInStock); //faz a verificacao se o produto existe ou nao
+           if (allProductsInStock){
+               orderRepository.save(order);
+               return "order placed successfully";
+           }else{
+               throw new IllegalArgumentException("this product is not in stock, please try again later");
+           }
+
+       }finally {
+           inventoryServiceLookup.end();
        }
+
     }
 
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
