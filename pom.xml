@@ -21,6 +21,7 @@
         <module>inventory-service</module>
         <module>discover-server</module>
         <module>apigateway</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
