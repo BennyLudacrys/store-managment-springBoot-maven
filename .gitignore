@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Generated resources
+mongo-data
+mysql_keycloak_data
+postgres-inventory
+postgres-order
