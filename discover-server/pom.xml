@@ -16,7 +16,6 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
-
 <dependencies>
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -43,11 +42,7 @@
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <dependency>
-        <groupId>io.micrometer</groupId>
-        <artifactId>micrometer-registry-prometheus</artifactId>
-        <scope>runtime</scope>
-    </dependency>
+
 </dependencies>
 
 </project>
