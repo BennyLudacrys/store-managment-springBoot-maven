@@ -5,8 +5,8 @@ import com.programmingtechie.orderservice.service.OrderService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
-import io.netty.util.concurrent.CompleteFuture;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
 public class OrderController {
+
 
     private final OrderService orderService;
 
