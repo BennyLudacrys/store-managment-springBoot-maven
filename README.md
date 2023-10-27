@@ -1,10 +1,10 @@
 
 # spring-boot-microservices
-![microservice-diagram](https://github.com/BennyLudacrys/store-managment-springBoot-maven/blob/main/store-microservise.drawio.png?raw=true)
+![microservice-diagram](https://github.com/BennyLudacrys/store-managment-springBoot-maven/blob/main/data_flow.png?raw=true)
 
 
 
-poroduct service - create and view products, acts as product catalog
+product service - create and view products, acts as product catalog
 
 Order Service - Can Order products;
 
